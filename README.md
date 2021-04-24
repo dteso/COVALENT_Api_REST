@@ -18,3 +18,34 @@ express-validator -     Librería que permite hacer validaciones semiautomática
 bcryptjs -              Permite encriptar contraseñas
 
 jsonwebtoken            Gestión del JSON Web TOken
+
+nodemailer              Librería para gestión de correos electrónicos
+
+express-fileupload      Librería para subida de ficheros
+
+uuid                    Generador de identificadores únicos
+
+    La cuenta de correo que va a actuar como remitente, en el caso de Google,
+    debe estar configurada 'Permitiendo el acceso a aplicaciones poco seguras'. Para habilitar 
+    la funcionalidad, se debe iniciar sesión en google con la cuenta remitente y habilitar el acceso 
+    desde esta url:
+    https://myaccount.google.com/u/0/lesssecureapps?pli=1&rapt=AEjHL4PCqXDASqurCfznmBGC9gvtAGOeWv35n64HaDx0C_wf2NPOTOpso-zAasqQkXcTuI0CB5nfPz-6a36sLurhdGaujIlbQA
+
+
+Pruebas desde POSTMAN: 
+
+- Si no se he generado un usuario, generarlo. Para ello hay que realizar una petición POST localhost:3000/api/login/
+
+    En postman seleccionar [raw] y del desplegable JSON para pasar el cuerpo de la petición de Login como se indica a continuación:
+
+    · Body: 
+    --------
+    {
+        "password": "123456",
+        "email": "user@email.com"
+    }
+
+    Si se trata de un correo válido el servicio mail.js se encargará de enviar un email a esa dirección.
+
+- Debe ejecutarse el login para obtener el token que será incluido como 'Header' en todas las peticiones que lo requieran. Se identificará como 'x-token'. 
+- Para la subida de archivos, en postman, como Body seleccionar form-data. En la key se permitirá escoger entre texto y archivo de forma que seleccionaremos archivo.
