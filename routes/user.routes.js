@@ -1,11 +1,11 @@
 const { Router } = require('express');
 const { check } = require('express-validator'); //check middlewares
 const { validateFields } = require('../middlewares/validate-fields');
+const { validateJWT } = require('../middlewares/validate-jwt');
 
 const { UserController } = require('../controllers/user.controller');
-const userModel = require('../models/user.model');
-const { validateJWT } = require('../middlewares/validate-jwt');
-const controller = new UserController(userModel);
+const User = require('../models/user.model');
+const controller = new UserController(User);
 
 const router = Router();
 
