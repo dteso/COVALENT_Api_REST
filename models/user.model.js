@@ -2,7 +2,7 @@ const { Schema, model } = require('mongoose');
 
 //const Schema = mongoose.Schema;
 
-const UserSchema = Schema({
+const UserSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -27,8 +27,14 @@ const UserSchema = Schema({
   google: {
     type: Boolean,
     default: false
+  },
+  createdAt: {
+    type: Date
+  },
+  updatedAt: {
+    type: Date
   }
-});
+}, { timestamps: true });
 
 UserSchema.method('toJSON', function () {
   const { __v, _id, password, ...object } = this.toObject(); // Evita que en la petición get se muestre el id. 

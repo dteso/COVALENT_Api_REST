@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/user.model');
 const { generateJWT } = require('../helpers/jwt');
 const { BaseController } = require('./base.controller');
+const { sendCustomMail } = require('../helpers/mail');
 
 class UserController extends BaseController {
 
@@ -15,10 +16,30 @@ class UserController extends BaseController {
   ///////////////////////////////////////
   getUsers = async (req, res) => {
     console.log("USER GET REQUEST");
-    const users = await User.find({}, 'nombre email role google'); //Sería como establecer su propio Dto sin necesidad de definirlo. Nos seguiría saliendo el _id y la __v. Esto se soluciona en el user.model.js
+
+    //Pagination
+    const from = Number(req.query.from) || 0;
+    const limit = Number(req.query.limit);
+
+    // const users = await User.find({}, 'name email role google createdAt updatedAt')
+    //   .skip(from) 
+    //   .limit(limit);
+
+    // const total = await User.count();
+
+    const [users, total] = await Promise.all([
+      User.find({}, 'name email role google img createdAt updatedAt') //Sería como establecer su propio Dto sin necesidad de definirlo. Nos seguiría saliendo el _id y la __v. Esto se soluciona en el user.model.js
+        .skip(from)
+        .limit(limit)
+      ,
+      User.countDocuments()
+    ]);
+
     res.json({
       ok: true,
       msg: `Users were LOADED sucessfully`,
+      shown: users.length,
+      total,
       users,
       userRequestId: req.uid
     });
@@ -56,7 +77,7 @@ class UserController extends BaseController {
       /************************************* 
        *          JWT Generation
       *************************************/
-      const token = await generateJWT(dbUser.id);
+      const token = await generateJWT(user.id);
       ///////////////////////////////////////
 
       res.status(200).json({
@@ -65,6 +86,18 @@ class UserController extends BaseController {
         user,
         token
       });
+
+      const msg = `${user.name}, se ha registrado correctamente en el sistema.
+
+Recuerde utilizar su correo ${user.email} para acceder en futuras sesiones.
+      
+MEDUSAKA SYSTEMS - digitalislandsp@gmail.com `;
+
+      try {
+        sendCustomMail('MEDUSAKA SYSTEMS', [user.email], 'Registro completado', msg);
+      } catch (err) {
+        console.log("Error sending mail");
+      }
     } catch (error) {
       console.log(error);
       res.status(500).json({
