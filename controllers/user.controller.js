@@ -51,7 +51,7 @@ class UserController extends BaseController {
 
 
       //Save user
-      await user.save();
+      let dbUser = await user.save();
 
       /************************************* 
        *          JWT Generation

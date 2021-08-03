@@ -20,5 +20,17 @@ router.post('/',
   ],
   controller.login);
 
+
+  /*************************************************************** 
+                      POST: /api/login/google
+****************************************************************/
+//router.post('/', createUser); //router.post('/', [{ mmiddleware1 }, { middleware2 }], createUser);
+router.post('/google',
+[
+  check('id_token').not().isEmpty(),
+  // validateFields
+],
+controller.googleSignIn);
+
 module.exports = router;
 
